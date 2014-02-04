@@ -1,0 +1,28 @@
+body{
+    background: #eee;
+}
+
+#section1{
+    background: #999;
+    height: 2000px;
+}
+
+#section2{
+    background: red;
+    height: 1200px;
+}
+
+#section3{
+    background: green;
+    height: 3000px;
+}
+
+#section4{
+    background: yellow;
+    height: 200px;
+}
+
+#section5{
+    background: blue;
+    height: 1500px;
+}
