@@ -37,27 +37,25 @@
             var self = this;
             var windowHeight = $(window).height();
 
-            console.log(self.currentSection);
-
+            console.log(self.scrolling);
 
             if(direction == 'down'){
-                if( self.currentScrollPos + windowHeight - self.offset > self.coordObj[self.currentSection].scrollPos + self.coordObj[self.currentSection].height ){
+                if( self.currentScrollPos + windowHeight - self.offset > self.coordObj[self.currentSection].scrollPos + self.coordObj[self.currentSection].height && self.currentSection != $(self.section).length - 1 ){
                     self.currentSection = ( self.currentSection + 1 < $(self.section).length ) ? self.currentSection + 1 : self.currentSection; // 0 index
-
                     snapper.disableScroll();
 
-                    $('html, body').animate({
+                    $('html').animate({
                         scrollTop: self.coordObj[self.currentSection].scrollPos
                     }, 2000, function(){
                         self.enableScroll();
                     });
                 }
             }else{
-                if( self.currentScrollPos - self.offset < self.coordObj[self.currentSection].scrollPos ){
+                if( self.currentScrollPos - self.offset < self.coordObj[self.currentSection].scrollPos && self.currentSection != 0 ){
                     self.currentSection = ( self.currentSection - 1 >= 0 ) ? self.currentSection - 1 : self.currentSection; // 0 index
                     snapper.disableScroll();
 
-                    $('html, body').animate({
+                    $('html').animate({
                         scrollTop: self.coordObj[self.currentSection].scrollPos
                     }, 2000, function(){
                         self.enableScroll();
@@ -72,19 +70,17 @@
 
             if( self.scrolling == false){
                 if( self.lastScrollPos > self.currentScrollPos){
-                    // console.log('scrolling up');
                     self.snap('up');
                 }else{
-                    // console.log('scrolling down');
                     self.snap('down');
                 }
             }
-
 
             self.lastScrollPos = self.currentScrollPos;
         },
 
         disableScroll: function(){
+            var self = this;
             $(document).on('mousewheel DOMMouseScroll', function(event) {
                 event.preventDefault();
                 event.stopPropagation();
@@ -94,6 +90,7 @@
         },
 
         enableScroll: function(){
+            var self = this;
             $(document).off();
             self.scrolling = false;
         }

@@ -2,6 +2,13 @@ body{
     background: #eee;
 }
 
+header{
+    height: 234px;
+    background: grey;
+    text-align: center;
+    padding: 20px;
+}
+
 #section1{
     background: #999;
     height: 2000px;
@@ -25,4 +32,11 @@ body{
 #section5{
     background: blue;
     height: 1500px;
+}\
+
+footer{
+    height: 400px;
+    background: grey;
+    padding: 20px;
+    text-align: center;
 }
