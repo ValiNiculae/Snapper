@@ -1,12 +1,13 @@
 (function(){
 
-    var scrolling = false;
-
     var snapper = {
         section: '.special',
         coordObj: {},
-        offset: 200, //how many pixeli before snapping to the next section
+        offset: 0, //how many pixeli before snapping to the next section
         currentSection: 0,
+        lastScrollPos: 0,
+        scrolling: false,
+        currentScrollPos: 0,
 
         init: function(){
             var self = this;
@@ -32,53 +33,76 @@
             });
         },
 
-        snap: function(){
+        snap: function(direction){
             var self = this;
+            var windowHeight = $(window).height();
 
-            console.log('test');
+            console.log(self.currentSection);
 
-            scrolling = true;
-            snapper.disableScroll();
 
-            if( self.currentSection + 1 != $(self.section).length){
-                self.currentSection++;
+            if(direction == 'down'){
+                if( self.currentScrollPos + windowHeight - self.offset > self.coordObj[self.currentSection].scrollPos + self.coordObj[self.currentSection].height ){
+                    self.currentSection = ( self.currentSection + 1 < $(self.section).length ) ? self.currentSection + 1 : self.currentSection; // 0 index
+
+                    snapper.disableScroll();
+
+                    $('html, body').animate({
+                        scrollTop: self.coordObj[self.currentSection].scrollPos
+                    }, 2000, function(){
+                        self.enableScroll();
+                    });
+                }
+            }else{
+                if( self.currentScrollPos - self.offset < self.coordObj[self.currentSection].scrollPos ){
+                    self.currentSection = ( self.currentSection - 1 >= 0 ) ? self.currentSection - 1 : self.currentSection; // 0 index
+                    snapper.disableScroll();
+
+                    $('html, body').animate({
+                        scrollTop: self.coordObj[self.currentSection].scrollPos
+                    }, 2000, function(){
+                        self.enableScroll();
+                    });
+                }
+            }
+        },
+
+        scrollDirection: function(){
+            var self = this;
+            self.currentScrollPos = $(window).scrollTop();
+
+            if( self.scrolling == false){
+                if( self.lastScrollPos > self.currentScrollPos){
+                    // console.log('scrolling up');
+                    self.snap('up');
+                }else{
+                    // console.log('scrolling down');
+                    self.snap('down');
+                }
             }
 
-            $('html, body').animate({
-                scrollTop: self.coordObj[self.currentSection].scrollPos
-            }, function(){
-                scrolling = false;
-                self.enableScroll();
-            });
+
+            self.lastScrollPos = self.currentScrollPos;
         },
 
         disableScroll: function(){
-             $(document).on('mousewheel DOMMouseScroll', function(event) {
+            $(document).on('mousewheel DOMMouseScroll', function(event) {
                 event.preventDefault();
                 event.stopPropagation();
             });
+
+            self.scrolling = true;
         },
 
         enableScroll: function(){
             $(document).off();
+            self.scrolling = false;
         }
     }
 
     snapper.init();
 
-
     $(window).scroll(function(){
-
-        if( $(this).scrollTop() > snapper.coordObj[currentSection].scrollTop + $(this).height() + snapper.offset && scrolling == false){
-            snapper.snap();
-            console.log('snappp');
-        }
-
-        // console.log( $(this).scrollTop() );
-        // console.log( $(this).height() );
-        // console.log( $(document).height() );
-
-        // snapper.getCoords();
+        snapper.scrollDirection();
     });
 
 })();
