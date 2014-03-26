@@ -13,6 +13,10 @@
             var self = this;
 
             self.getCoords();
+
+            $(window).scroll(function(){
+                snapper.scrollDirection();
+            });
         },
 
         getCoords: function(){
@@ -37,31 +41,34 @@
             var self = this;
             var windowHeight = $(window).height();
 
-            console.log(self.scrolling);
-
             if(direction == 'down'){
                 if( self.currentScrollPos + windowHeight - self.offset > self.coordObj[self.currentSection].scrollPos + self.coordObj[self.currentSection].height && self.currentSection != $(self.section).length - 1 ){
+
                     self.currentSection = ( self.currentSection + 1 < $(self.section).length ) ? self.currentSection + 1 : self.currentSection; // 0 index
                     snapper.disableScroll();
-
-                    $('html').animate({
-                        scrollTop: self.coordObj[self.currentSection].scrollPos
-                    }, 2000, function(){
-                        self.enableScroll();
-                    });
+                    self.slideToSection();
                 }
             }else{
                 if( self.currentScrollPos - self.offset < self.coordObj[self.currentSection].scrollPos && self.currentSection != 0 ){
+
                     self.currentSection = ( self.currentSection - 1 >= 0 ) ? self.currentSection - 1 : self.currentSection; // 0 index
                     snapper.disableScroll();
-
-                    $('html').animate({
-                        scrollTop: self.coordObj[self.currentSection].scrollPos
-                    }, 2000, function(){
-                        self.enableScroll();
-                    });
+                    self.slideToSection();
                 }
             }
+        },
+
+        slideToSection: function(){
+            var self = this;
+            $('html, body').animate({
+                scrollTop: self.coordObj[self.currentSection].scrollPos
+            }, 1000).promise().done(function(){
+
+                // Small "hack" to prevent scrolling after callback
+                setTimeout(function(){
+                    self.enableScroll();
+                }, 100);
+            });
         },
 
         scrollDirection: function(){
@@ -92,14 +99,11 @@
         enableScroll: function(){
             var self = this;
             $(document).off();
+
             self.scrolling = false;
         }
     }
 
     snapper.init();
-
-    $(window).scroll(function(){
-        snapper.scrollDirection();
-    });
 
 })();
